@@ -124,6 +124,7 @@ var directive = {
   inserted: function inserted(el, binding, vnode) {
     if (!document) return;
     function onPointerStart(evt) {
+      evt.preventDefault();
       u.addEventListeners(document.documentElement, POINTER_MOVE_EVENTS, onPointerMove);
       u.addEventListeners(document.documentElement, POINTER_END_EVENTS, onPointerEnd);
       el.lastCoords = el.firstCoords = {
