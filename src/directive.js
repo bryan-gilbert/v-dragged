@@ -9,6 +9,16 @@ export default {
   inserted(el, binding, vnode) {
     if (!document) return
     function onPointerStart(evt) {
+      u.addEventListeners(
+          document.documentElement,
+          POINTER_MOVE_EVENTS,
+          onPointerMove
+      )
+      u.addEventListeners(
+          document.documentElement,
+          POINTER_END_EVENTS,
+          onPointerEnd
+      )
       el.lastCoords = el.firstCoords = {
         x: evt.clientX,
         y: evt.clientY
@@ -32,6 +42,8 @@ export default {
         clientY: evt.clientY
       })
       draggedElem = null
+      u.removeEventListeners(document.documentElement, POINTER_END_EVENTS)
+      u.removeEventListeners(document.documentElement, POINTER_MOVE_EVENTS)
     }
     function onPointerMove(evt) {
       if (el !== draggedElem) return
@@ -60,16 +72,6 @@ export default {
       }
     }
     u.addEventListeners(el, POINTER_START_EVENTS, onPointerStart)
-    u.addEventListeners(
-      document.documentElement,
-      POINTER_END_EVENTS,
-      onPointerEnd
-    )
-    u.addEventListeners(
-      document.documentElement,
-      POINTER_MOVE_EVENTS,
-      onPointerMove
-    )
   },
 
   unbind(el) {
