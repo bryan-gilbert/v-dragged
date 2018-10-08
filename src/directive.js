@@ -9,6 +9,7 @@ export default {
   inserted(el, binding, vnode) {
     if (!document) return
     function onPointerStart(evt) {
+      evt.preventDefault()
       u.addEventListeners(
           document.documentElement,
           POINTER_MOVE_EVENTS,
