@@ -75,7 +75,7 @@ function shouldUseNative() {
 	}
 }
 
-var index = shouldUseNative() ? Object.assign : function (target, source) {
+var objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
 	var from;
 	var to = toObject(target);
 	var symbols;
@@ -124,6 +124,8 @@ var directive = {
   inserted: function inserted(el, binding, vnode) {
     if (!document) return;
     function onPointerStart(evt) {
+      u.addEventListeners(document.documentElement, POINTER_MOVE_EVENTS, onPointerMove);
+      u.addEventListeners(document.documentElement, POINTER_END_EVENTS, onPointerEnd);
       el.lastCoords = el.firstCoords = {
         x: evt.clientX,
         y: evt.clientY
@@ -147,6 +149,8 @@ var directive = {
         clientY: evt.clientY
       });
       draggedElem = null;
+      u.removeEventListeners(document.documentElement, POINTER_END_EVENTS);
+      u.removeEventListeners(document.documentElement, POINTER_MOVE_EVENTS);
     }
     function onPointerMove(evt) {
       if (el !== draggedElem) return;
@@ -175,8 +179,6 @@ var directive = {
       }
     }
     u.addEventListeners(el, POINTER_START_EVENTS, onPointerStart);
-    u.addEventListeners(document.documentElement, POINTER_END_EVENTS, onPointerEnd);
-    u.addEventListeners(document.documentElement, POINTER_MOVE_EVENTS, onPointerMove);
   },
   unbind: function unbind(el) {
     u.removeEventListeners(el, POINTER_START_EVENTS);
@@ -189,7 +191,7 @@ var defaultOptions = {};
 
 var VDragged = {
   install: function install(Vue, options) {
-    options = index({}, defaultOptions, options);
+    options = objectAssign({}, defaultOptions, options);
     var major = Number(Vue.version.split('.')[0]);
     var minor = Number(Vue.version.split('.')[1]);
     if (major < 2 && minor < 1) {
